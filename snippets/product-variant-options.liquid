@@ -1,0 +1,227 @@
+{% comment %}
+  Renders product variant options
+
+  Accepts:
+  - product: {Object} product object.
+  - option: {Object} current product_option object.
+  - block: {Object} block object.
+  - picker_type: {String} type of picker to dispay
+
+  Usage:
+  {% render 'product-variant-options',
+    product: product,
+    option: option,
+    block: block
+    picker_type: picker_type
+  %}
+{% endcomment %}
+{%- liquid
+  assign product_form_id = 'product-form-' | append: section.id
+-%}
+
+{%- for value in option.values -%}
+  {%- liquid
+    assign swatch_focal_point = null
+    if value.swatch.image
+      assign image_url = value.swatch.image | image_url: width: 50
+      assign swatch_value = 'url(' | append: image_url | append: ')'
+      assign swatch_focal_point = value.swatch.image.presentation.focal_point
+    elsif value.swatch.color
+      assign swatch_value = 'rgb(' | append: value.swatch.color.rgb | append: ')'
+    else
+      assign swatch_value = null
+    endif
+
+    assign option_disabled = true
+    if value.available
+      assign option_disabled = false
+    endif
+
+    assign option_name_downcase = option.name | downcase
+    assign value_name_downcase = value | downcase
+
+    assign is_managed_option = false
+    if option_name_downcase contains 'size' or option_name_downcase contains 'color'
+      assign is_managed_option = true
+    endif
+
+    assign keep_out_of_stock = false
+    if is_managed_option
+      if value_name_downcase contains 'out of stock' or value_name_downcase contains 'outofstock'
+        assign keep_out_of_stock = true
+      endif
+    endif
+
+    assign mark_unavailable = false
+    if is_managed_option and option_disabled
+      assign mark_unavailable = true
+    endif
+
+    assign is_best_seller = false
+    assign display_value = value
+    assign best_seller_phrase = ''
+    if value_name_downcase contains 'best seller'
+      assign best_seller_phrase = 'best seller'
+    elsif value_name_downcase contains 'bestseller'
+      assign best_seller_phrase = 'bestseller'
+    endif
+
+    if best_seller_phrase != blank
+      assign is_best_seller = true
+      assign value_string = value | append: ''
+      assign best_seller_prefix = value_name_downcase | split: best_seller_phrase | first
+      assign best_seller_prefix_size = best_seller_prefix | size
+      assign best_seller_phrase_size = best_seller_phrase | size
+      assign best_seller_suffix_start = best_seller_prefix_size | plus: best_seller_phrase_size
+      assign display_prefix = value_string | slice: 0, best_seller_prefix_size
+      assign display_suffix = value_string | slice: best_seller_suffix_start, 200
+      assign display_value = display_prefix | append: display_suffix | replace: '()', '' | replace: '( )', '' | replace: '  ', ' ' | strip
+
+      assign display_last_char = display_value | slice: -1, 1
+      if display_last_char == '-' or display_last_char == '|' or display_last_char == '(' or display_last_char == ')' or display_last_char == '/' or display_last_char == '–' or display_last_char == '—'
+        assign display_length = display_value | size | minus: 1
+        assign display_value = display_value | slice: 0, display_length | strip
+      endif
+
+      assign display_first_char = display_value | slice: 0, 1
+      if display_first_char == '-' or display_first_char == '|' or display_first_char == '(' or display_first_char == ')' or display_first_char == '/' or display_first_char == '–' or display_first_char == '—'
+        assign display_value = display_value | slice: 1, 200 | strip
+      endif
+
+      if display_value == blank
+        assign display_value = value
+      endif
+    endif
+
+    assign is_out_of_stock = false
+    assign out_of_stock_source = display_value | downcase
+    assign out_of_stock_phrase = ''
+    if out_of_stock_source contains 'out of stock'
+      assign out_of_stock_phrase = 'out of stock'
+    elsif out_of_stock_source contains 'outofstock'
+      assign out_of_stock_phrase = 'outofstock'
+    endif
+
+    if out_of_stock_phrase != blank
+      assign is_out_of_stock = true
+      assign value_string = display_value | append: ''
+      assign out_of_stock_prefix = out_of_stock_source | split: out_of_stock_phrase | first
+      assign out_of_stock_prefix_size = out_of_stock_prefix | size
+      assign out_of_stock_phrase_size = out_of_stock_phrase | size
+      assign out_of_stock_suffix_start = out_of_stock_prefix_size | plus: out_of_stock_phrase_size
+      assign display_prefix = value_string | slice: 0, out_of_stock_prefix_size
+      assign display_suffix = value_string | slice: out_of_stock_suffix_start, 200
+      assign display_value = display_prefix | append: display_suffix | replace: '()', '' | replace: '( )', '' | replace: '  ', ' ' | strip
+
+      assign display_last_char = display_value | slice: -1, 1
+      if display_last_char == '-' or display_last_char == '|' or display_last_char == '(' or display_last_char == ')' or display_last_char == '/' or display_last_char == '–' or display_last_char == '—'
+        assign display_length = display_value | size | minus: 1
+        assign display_value = display_value | slice: 0, display_length | strip
+      endif
+
+      assign display_first_char = display_value | slice: 0, 1
+      if display_first_char == '-' or display_first_char == '|' or display_first_char == '(' or display_first_char == ')' or display_first_char == '/' or display_first_char == '–' or display_first_char == '—'
+        assign display_value = display_value | slice: 1, 200 | strip
+      endif
+
+      if display_value == blank
+        assign display_value = value
+      endif
+    endif
+  -%}
+
+  {%- capture input_id -%}
+    {{ section.id }}-{{ option.position }}-{{ forloop.index0 -}}
+  {%- endcapture -%}
+
+  {%- capture input_name -%}
+    {{ option.name }}-{{ option.position }}
+  {%- endcapture -%}
+
+  {%- capture input_dataset -%}
+    data-product-url="{{ value.product_url }}"
+    data-option-value-id="{{ value.id }}"
+    {% if keep_out_of_stock %}data-keep-out-of-stock="true"{% endif %}
+    {% if mark_unavailable %}data-unavailable="true" disabled{% endif %}
+  {%- endcapture -%}
+
+  {%- capture label_unavailable -%}
+    <span class="visually-hidden label-unavailable">
+      {{- 'products.product.variant_sold_out_or_unavailable' | t -}}
+    </span>
+  {%- endcapture -%}
+
+  {% assign escaped_value = value | escape %}
+
+  {%- if picker_type == 'swatch' -%}
+    {%- capture help_text -%}
+      <span class="visually-hidden">{{ escaped_value }}</span>
+      {{ label_unavailable }}
+    {%- endcapture -%}
+
+    {%
+      render 'swatch-input',
+      id: input_id,
+      name: input_name,
+      value: escaped_value,
+      swatch: value.swatch,
+      product_form_id: product_form_id,
+      checked: value.selected,
+      visually_disabled: option_disabled,
+      shape: block.settings.swatch_shape,
+      help_text: help_text,
+      additional_props: input_dataset
+    %}
+  {%- elsif picker_type == 'button' -%}
+    <input
+      type="radio"
+      id="{{ input_id }}"
+      name="{{ input_name | escape }}"
+      value="{{ escaped_value }}"
+      form="{{ product_form_id }}"
+      {% if value.selected %}
+        checked
+      {% endif %}
+      {% if option_disabled %}
+        class="disabled"
+      {% endif %}
+      {{ input_dataset }}
+    >
+    <label for="{{ input_id }}">
+      <span class="variant-option-label__text">{{ display_value }}</span>
+      {{ label_unavailable }}
+      {%- if is_best_seller -%}
+        <span class="variant-option-badge variant-best-seller-badge">
+          <svg class="variant-best-seller-badge__icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false">
+            <path d="M12.0502 0.856544C11.9904 0.809766 11.93 0.763839 11.8689 0.71875C11.7255 1.32585 11.2713 2.26151 10.9739 2.80775C10.2235 4.15947 9.28846 5.40055 8.19553 6.49533C7.83673 6.85686 7.46548 7.20588 7.08244 7.54176C6.57643 7.98338 6.18126 8.3001 5.69297 8.79667C3.7221 10.8009 2.52867 13.5044 2.84847 16.3392C3.00748 17.7488 3.34461 18.9135 4.09097 20.1394C4.90426 21.4752 6.20232 22.6135 7.66396 23.1987C7.56493 22.9609 7.45116 22.7422 7.35722 22.5019C6.91571 21.3723 6.89666 20.1219 7.37162 18.9932C7.99717 17.5182 9.29985 16.4512 10.6419 15.6419C10.9712 15.4433 11.3018 15.2659 11.6508 15.0918C11.9478 14.9436 12.359 15.0536 12.4809 15.377C12.5842 15.6513 12.458 16.0768 12.4803 16.3702C12.4902 16.6461 12.5045 16.8695 12.5416 17.1398C12.8101 19.0946 13.9719 20.7188 15.5388 21.8742C16.0374 22.242 16.462 22.4809 16.9982 22.7885L17.0126 22.7771C17.1579 22.6625 17.3775 22.528 17.5355 22.4185C17.7971 22.235 18.0512 22.0412 18.2972 21.8374C20.4379 20.048 21.5139 17.5713 21.1149 14.7952C21.0775 14.5353 21.06 14.2935 20.9985 14.0345C20.9702 13.8968 20.8532 13.3975 20.7983 13.1651C20.6654 12.8579 20.5937 12.6063 20.48 12.2978C20.3503 11.9488 20.2074 11.6044 20.0519 11.2659C19.8839 10.8907 19.7006 10.5226 19.5022 10.1625C19.3813 9.94084 19.2207 9.6756 19.1133 9.45432C18.4422 10.5032 17.3984 11.5062 16.3543 12.1913C16.0281 12.3878 15.6405 12.7355 15.2503 12.4687C14.9195 12.2426 14.9786 11.9897 15.0395 11.6576C15.6468 8.35046 15.3157 4.54631 13.0761 1.8791C12.7761 1.52182 12.4124 1.14186 12.0502 0.856544Z" fill="currentColor"/>
+          </svg>
+          Best Seller
+        </span>
+      {%- endif -%}
+      {%- if is_out_of_stock -%}
+        <span class="variant-option-badge variant-out-of-stock-badge">Out of Stock</span>
+      {%- endif -%}
+    </label>
+  {%- elsif picker_type == 'dropdown' or picker_type == 'swatch_dropdown' -%}
+    <option
+      id="{{ input_id }}"
+      value="{{ escaped_value }}"
+      {% if value.selected %}
+        selected="selected"
+      {% endif %}
+      {% if swatch_value and picker_type == 'swatch_dropdown' %}
+        data-option-swatch-value="{{ swatch_value }}"
+        {% if swatch_focal_point %}
+          data-option-swatch-focal-point="{{ swatch_focal_point }}"
+        {% endif %}
+      {% endif %}
+      {{ input_dataset }}
+    >
+      {% if option_disabled -%}
+        {{- 'products.product.value_unavailable' | t: option_value: value -}}
+      {%- else -%}
+        {{- value -}}
+      {%- endif %}
+    </option>
+  {%- endif -%}
+{%- endfor -%}

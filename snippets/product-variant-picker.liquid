@@ -1,0 +1,141 @@
+{% comment %}
+  Renders product variant-picker
+
+  Accepts:
+  - product: {Object} product object.
+  - block: {Object} passing the block information.
+  - product_form_id: {String} Id of the product form to which the variant picker is associated.
+  Usage:
+  {% render 'product-variant-picker', product: product, block: block, product_form_id: product_form_id %}
+{% endcomment %}
+{%- unless product.has_only_default_variant -%}
+  <variant-selects
+    id="variant-selects-{{ section.id }}"
+    data-section="{{ section.id }}"
+    {{ block.shopify_attributes }}
+  >
+    {%- for option in product.options_with_values -%}
+      {%- liquid
+        assign swatch_count = option.values | map: 'swatch' | compact | size
+        assign picker_type = block.settings.picker_type
+
+        if swatch_count > 0 and block.settings.swatch_shape != 'none'
+          if block.settings.picker_type == 'dropdown'
+            assign picker_type = 'swatch_dropdown'
+          else
+            assign picker_type = 'swatch'
+          endif
+        endif
+      -%}
+      {%- if picker_type == 'swatch' -%}
+        <fieldset
+          class="js product-form__input product-form__input--swatch"
+          data-option-name="{{ option.name | escape }}"
+          data-option-position="{{ option.position }}"
+        >
+          <legend class="form__label">
+            {{ option.name }}:
+            <span data-selected-value>
+              {{- option.selected_value -}}
+            </span>
+          </legend>
+          {% render 'product-variant-options',
+            product: product,
+            option: option,
+            block: block,
+            picker_type: picker_type
+          %}
+        </fieldset>
+      {%- elsif picker_type == 'button' -%}
+        <fieldset
+          class="js product-form__input product-form__input--pill"
+          data-option-name="{{ option.name | escape }}"
+          data-option-position="{{ option.position }}"
+        >
+          <legend class="form__label">{{ option.name }}</legend>
+          {% render 'product-variant-options',
+            product: product,
+            option: option,
+            block: block,
+            picker_type: picker_type
+          %}
+        </fieldset>
+      {%- else -%}
+        <div
+          class="product-form__input product-form__input--dropdown"
+          data-option-name="{{ option.name | escape }}"
+          data-option-position="{{ option.position }}"
+        >
+          <label class="form__label" for="Option-{{ section.id }}-{{ forloop.index0 }}">
+            {{ option.name }}
+          </label>
+          <div class="select">
+            {%- if picker_type == 'swatch_dropdown' -%}
+              <span
+                data-selected-value
+                class="dropdown-swatch"
+              >
+                {% render 'swatch', swatch: option.selected_value.swatch, shape: block.settings.swatch_shape %}
+              </span>
+            {%- endif -%}
+            <select
+              id="Option-{{ section.id }}-{{ forloop.index0 }}"
+              class="select__select"
+              name="options[{{ option.name | escape }}]"
+              form="{{ product_form_id }}"
+            >
+              {% render 'product-variant-options',
+                product: product,
+                option: option,
+                block: block,
+                picker_type: picker_type
+              %}
+            </select>
+            <span class="svg-wrapper">
+              {{- 'icon-caret.svg' | inline_asset_content -}}
+            </span>
+          </div>
+        </div>
+      {%- endif -%}
+    {%- endfor -%}
+
+    <script type="application/json" data-selected-variant>
+      {{ product.selected_or_first_available_variant | json }}
+    </script>
+
+    <script type="application/json" data-available-combos>
+      [
+        {%- assign combo_first = true -%}
+        {%- for variant in product.variants -%}
+          {%- if variant.available -%}
+            {%- unless combo_first %},{% endunless -%}
+            {%- assign combo_first = false -%}
+            [
+              {%- for option_value in variant.options -%}
+                {{ option_value | json }}{%- unless forloop.last -%},{%- endunless -%}
+              {%- endfor -%}
+            ]
+          {%- endif -%}
+        {%- endfor -%}
+      ]
+    </script>
+  </variant-selects>
+{%- endunless -%}
+
+<style>
+  /* Ẩn Size/Color hết hàng — trừ giá trị có chữ (Out of stock) */
+  .product-form__input input[data-unavailable]:not([data-keep-out-of-stock]),
+  .product-form__input input[data-unavailable]:not([data-keep-out-of-stock]) + label {
+    display: none !important;
+  }
+
+  /* Ngoại lệ: vẫn hiện, gạch ngang chữ size, không bấm được. Badge giữ màu riêng. */
+  .product-form__input input[data-keep-out-of-stock][data-unavailable] + label {
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+
+  .product-form__input input[data-keep-out-of-stock][data-unavailable] + label .variant-option-label__text {
+    text-decoration: line-through;
+  }
+</style>

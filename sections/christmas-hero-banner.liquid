@@ -1,0 +1,557 @@
+{%- liquid
+  assign desktop_image = section.settings.desktop_image_url | strip
+  assign mobile_image = section.settings.mobile_image_url | strip
+  assign tree_image = section.settings.tree_image_url | strip
+  assign end_at = section.settings.end_datetime | strip
+  assign loading = 'lazy'
+  assign fetchpriority = 'auto'
+  if section.index == 1
+    assign loading = 'eager'
+    assign fetchpriority = 'high'
+  endif
+-%}
+
+{%- style -%}
+  #shopify-section-{{ section.id }} .xmas-hero {
+    --xmas-green: #205127;
+    --xmas-cream: #fdedd7;
+    --xmas-red: #e10b22;
+    --xmas-ink: #274325;
+    --xmas-dash: #e49121;
+    --xmas-wave: {{ section.settings.wave_color }};
+    position: relative;
+    width: 100%;
+    background: var(--xmas-wave);
+  }
+
+  #shopify-section-{{ section.id }} .xmas-hero__media {
+    position: relative;
+    display: block;
+    width: 100%;
+    aspect-ratio: 2880 / 900;
+    background: #1d3a28;
+    overflow: hidden;
+  }
+
+  #shopify-section-{{ section.id }} .xmas-hero__media img,
+  #shopify-section-{{ section.id }} .xmas-hero__placeholder {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  #shopify-section-{{ section.id }} .xmas-hero__placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    color: #fdedd7;
+    text-align: center;
+    font-size: 16px;
+    line-height: 1.5;
+  }
+
+  #shopify-section-{{ section.id }} .xmas-hero__tree {
+    position: absolute;
+    left: -2%;
+    bottom: 2%;
+    z-index: 3;
+    width: clamp(120px, 17vw, 250px);
+    height: auto;
+    pointer-events: none;
+    transform-origin: center bottom;
+    animation: xmas-tree-sway-{{ section.id }} 3.6s ease-in-out infinite;
+  }
+
+  @keyframes xmas-tree-sway-{{ section.id }} {
+    0%, 100% { transform: rotate(0deg); }
+    20% { transform: rotate(1.8deg); }
+    50% { transform: rotate(-2.4deg); }
+    75% { transform: rotate(1.2deg); }
+  }
+
+  #shopify-section-{{ section.id }} .xmas-hero__wave {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -1px;
+    z-index: 4;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1024 / 37;
+    display: block;
+    pointer-events: none;
+  }
+
+  #shopify-section-{{ section.id }} .xmas-hero__timer {
+    position: absolute;
+    z-index: 5;
+    left: 14%;
+    bottom: 8px;
+    width: clamp(260px, 22%, 340px);
+    box-sizing: border-box;
+    padding: 22px 14px 12px;
+    border-radius: 16px;
+    background: var(--xmas-green);
+  }
+
+  #shopify-section-{{ section.id }} .xmas-hero__snow {
+    position: absolute;
+    left: 0;
+    top: -14px;
+    z-index: 2;
+    width: 100%;
+    height: auto;
+    pointer-events: none;
+  }
+
+  #shopify-section-{{ section.id }} .xmas-hero__cells {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  #shopify-section-{{ section.id }} .xmas-hero__cell {
+    position: relative;
+    flex: 1 1 0;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2px 0 6px;
+    border-radius: 10px;
+    background: var(--xmas-cream);
+    box-shadow:
+      inset 0 4px 4.6px rgba(182, 154, 117, 0.8),
+      0 4px 24px rgba(183, 144, 90, 0.2);
+  }
+
+  #shopify-section-{{ section.id }} .xmas-hero__value {
+    display: block;
+    width: calc(100% - 10px);
+    margin: 0 5px;
+    padding-bottom: 2px;
+    border-bottom: 0.5px dashed var(--xmas-dash);
+    color: var(--xmas-red);
+    font-family: var(--font-body-family), "Helvetica Neue", Arial, sans-serif;
+    font-size: 40px;
+    font-weight: 700;
+    line-height: 1.15;
+    letter-spacing: 1px;
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+  }
+
+  #shopify-section-{{ section.id }} .xmas-hero__label {
+    display: block;
+    margin-top: 6px;
+    color: var(--xmas-ink);
+    font-family: var(--font-body-family), "Helvetica Neue", Arial, sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: 0.4px;
+    text-align: center;
+    text-transform: uppercase;
+  }
+
+  #shopify-section-{{ section.id }} .xmas-hero__holly {
+    position: absolute;
+    z-index: 3;
+    top: 38%;
+    left: 78%;
+    width: 40px;
+    height: auto;
+    pointer-events: none;
+  }
+
+  @media screen and (max-width: 989px) {
+    #shopify-section-{{ section.id }} .xmas-hero__timer {
+      left: 4%;
+      width: min(300px, 48%);
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    #shopify-section-{{ section.id }} .xmas-hero__media {
+      aspect-ratio: 1125 / 1440;
+    }
+
+    #shopify-section-{{ section.id }} .xmas-hero__timer {
+      left: 50%;
+      bottom: 28px;
+      width: min(300px, 82%);
+      transform: translateX(-50%);
+      padding: 18px 12px 12px;
+      border-radius: 12px;
+    }
+
+    #shopify-section-{{ section.id }} .xmas-hero__value {
+      font-size: 32px;
+    }
+
+    #shopify-section-{{ section.id }} .xmas-hero__label {
+      font-size: 11px;
+    }
+
+    #shopify-section-{{ section.id }} .xmas-hero__cells {
+      gap: 8px;
+    }
+
+    #shopify-section-{{ section.id }} .xmas-hero__holly {
+      width: 32px;
+      top: 34%;
+      left: 92%;
+    }
+
+    #shopify-section-{{ section.id }} .xmas-hero__snow {
+      top: -12px;
+    }
+
+    #shopify-section-{{ section.id }} .xmas-hero__tree {
+      width: min(30vw, 140px);
+      left: -6%;
+      bottom: 0;
+      z-index: 6;
+    }
+
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    #shopify-section-{{ section.id }} .xmas-hero__tree {
+      animation: none;
+    }
+  }
+
+  {%- if section.settings.show_snowfall -%}
+    #christmas-snowfall-{{ section.id }} {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    #christmas-snowfall-{{ section.id }} .snowflake {
+      position: absolute;
+      top: -10px;
+      left: 0;
+      width: var(--size);
+      height: var(--size);
+      border-radius: 50%;
+      background: rgba(255, 255, 255, var(--opacity));
+      filter: blur(var(--blur));
+      pointer-events: none;
+      animation:
+        christmas-snow-fall var(--fall-duration) linear infinite,
+        christmas-snow-sway var(--sway-duration) ease-in-out infinite alternate;
+      animation-delay: var(--delay), var(--sway-delay);
+      will-change: transform;
+    }
+
+    @keyframes christmas-snow-fall {
+      0% { transform: translate3d(0, -5vh, 0) rotate(0); }
+      100% { transform: translate3d(var(--drift), 110vh, 0) rotate(var(--rotation)); }
+    }
+
+    @keyframes christmas-snow-sway {
+      0% { margin-left: -8px; }
+      50% { margin-left: 4px; }
+      100% { margin-left: 10px; }
+    }
+
+    @media (max-width: 749px) {
+      #christmas-snowfall-{{ section.id }} .snowflake:nth-child(n + 41) { display: none; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      #christmas-snowfall-{{ section.id }} { display: none; }
+    }
+  {%- endif -%}
+{%- endstyle -%}
+
+<div class="xmas-hero" {{ section.shopify_attributes }}>
+  {%- if section.settings.banner_link != blank -%}
+    <a class="xmas-hero__media" href="{{ section.settings.banner_link }}">
+  {%- else -%}
+    <div class="xmas-hero__media">
+  {%- endif -%}
+    {%- if desktop_image != blank or mobile_image != blank -%}
+      <picture>
+        {%- if mobile_image != blank -%}
+          <source media="(max-width: 749px)" srcset="{{ mobile_image | escape }}">
+        {%- endif -%}
+        <img
+          src="{{ desktop_image | default: mobile_image | escape }}"
+          alt="{{ section.settings.image_alt | escape }}"
+          width="2880"
+          height="900"
+          loading="{{ loading }}"
+          fetchpriority="{{ fetchpriority }}"
+        >
+      </picture>
+    {%- else -%}
+      <div class="xmas-hero__placeholder">
+        Dán URL ảnh desktop 2880×900 và ảnh mobile 1125×1440 trong cài đặt section.
+      </div>
+    {%- endif -%}
+  {%- if section.settings.banner_link != blank -%}
+    </a>
+  {%- else -%}
+    </div>
+  {%- endif -%}
+
+  {%- if tree_image != blank -%}
+    <img
+      class="xmas-hero__tree"
+      src="{{ tree_image | escape }}"
+      alt=""
+      width="747"
+      height="1119"
+      loading="lazy"
+    >
+  {%- endif -%}
+
+  {%- if section.settings.show_countdown -%}
+    <div
+      class="xmas-hero__timer"
+      data-xmas-countdown
+      data-end="{{ end_at | escape }}"
+      role="timer"
+      aria-label="{{ section.settings.label_days | escape }} {{ section.settings.label_hours | escape }} {{ section.settings.label_minutes | escape }}"
+    >
+      <img
+        class="xmas-hero__snow"
+        src="https://cdn.shopify.com/s/files/1/0748/9077/2658/files/pfh26-xmas-snow-decor-01.avif?v=1790610071"
+        alt=""
+        width="800"
+        height="121"
+      >
+
+      <div class="xmas-hero__cells">
+        <div class="xmas-hero__cell">
+          <span class="xmas-hero__value" data-xmas-days>00</span>
+          <span class="xmas-hero__label">{{ section.settings.label_days | escape }}</span>
+          <img
+            class="xmas-hero__holly"
+            src="https://cdn.shopify.com/s/files/1/0748/9077/2658/files/pfh26-xmas-flower-decor-01.webp?v=1790610074"
+            alt=""
+            width="111"
+            height="81"
+          >
+        </div>
+        <div class="xmas-hero__cell">
+          <span class="xmas-hero__value" data-xmas-hours>00</span>
+          <span class="xmas-hero__label">{{ section.settings.label_hours | escape }}</span>
+          <img
+            class="xmas-hero__holly"
+            src="https://cdn.shopify.com/s/files/1/0748/9077/2658/files/pfh26-xmas-flower-decor-01.webp?v=1790610074"
+            alt=""
+            width="111"
+            height="81"
+          >
+        </div>
+        <div class="xmas-hero__cell">
+          <span class="xmas-hero__value" data-xmas-minutes>00</span>
+          <span class="xmas-hero__label">{{ section.settings.label_minutes | escape }}</span>
+        </div>
+      </div>
+    </div>
+  {%- endif -%}
+
+  <svg class="xmas-hero__wave" viewBox="0 0 1024 37" preserveAspectRatio="none" aria-hidden="true">
+    <path fill="{{ section.settings.wave_color }}" d="M0 6C6 7 25.8 10.2 36 12C46.2 13.8 51.5 15.2 61 17C70.5 18.8 81.5 21.3 93 23C104.5 24.7 117.8 26.7 130 27C142.2 27.3 154.2 26.3 166 25C177.8 23.7 191 20.8 201 19C211 17.2 216.5 15.8 226 14C235.5 12.2 247.7 9.5 258 8C268.3 6.5 277.8 5.3 288 5C298.2 4.7 309.2 5.2 319 6C328.8 6.8 336.2 8.1 347 10C357.8 11.9 371.8 14.9 384 17.6C396.2 20.3 409.3 23.8 420 26C430.7 28.2 438 29.8 448 31C458 32.2 468.7 32.8 480 33C491.3 33.2 505.2 32.8 516 32C526.8 31.2 535 29.6 545 28C555 26.4 566.5 24 576 22.2C585.5 20.4 593 18.5 602 17C611 15.5 618.3 13.8 630 13C641.7 12.2 659.5 11.7 672 12C684.5 12.3 694.8 13.8 705 15C715.2 16.2 723 17.5 733 19C743 20.5 753.5 22.7 765 24C776.5 25.3 790.2 26.8 802 27C813.8 27.2 825.7 26.1 836 25C846.3 23.9 852.2 23.1 864 20.6C875.8 18.1 896 12.6 907 10C918 7.4 921.2 6.6 930 5C938.8 3.4 948.2 1.3 960 0.6C971.8 -0.1 990.3 0.4 1001 1C1011.7 1.6 1020.2 3.5 1024 4L1024 37L0 37Z"/>
+  </svg>
+</div>
+
+<script>
+  (function () {
+    var root = document.getElementById('shopify-section-{{ section.id }}');
+    if (!root) return;
+    var timer = root.querySelector('[data-xmas-countdown]');
+    if (!timer || timer.getAttribute('data-bound') === 'true') return;
+    timer.setAttribute('data-bound', 'true');
+    var end = Date.parse(timer.getAttribute('data-end') || '');
+    var daysEl = timer.querySelector('[data-xmas-days]');
+    var hoursEl = timer.querySelector('[data-xmas-hours]');
+    var minutesEl = timer.querySelector('[data-xmas-minutes]');
+
+    function pad(value) {
+      return String(value).padStart(2, '0');
+    }
+
+    function tick() {
+      if (Number.isNaN(end)) return;
+      var remaining = Math.max(0, end - Date.now());
+      var totalMinutes = Math.floor(remaining / 60000);
+      daysEl.textContent = pad(Math.floor(totalMinutes / 1440));
+      hoursEl.textContent = pad(Math.floor((totalMinutes % 1440) / 60));
+      minutesEl.textContent = pad(totalMinutes % 60);
+    }
+
+    tick();
+    window.setInterval(tick, 1000);
+  })();
+</script>
+
+{%- if section.settings.show_snowfall -%}
+  <div id="christmas-snowfall-{{ section.id }}" aria-hidden="true"></div>
+  <script>
+    (function () {
+      var rootId = 'christmas-snowfall-{{ section.id }}';
+      var C = {
+        desktopCount: 85,
+        mobileCount: 40,
+        minSize: 1,
+        maxSize: 4,
+        minDuration: 11,
+        maxDuration: 22,
+        minDrift: -45,
+        maxDrift: 45
+      };
+      var R = function (a, b) { return Math.random() * (b - a) + a; };
+
+      function snow() {
+        var c = document.getElementById(rootId);
+        if (!c || c.dataset.snowInitialized === 'true') return;
+        c.dataset.snowInitialized = 'true';
+
+        var f = document.createDocumentFragment();
+        var n = window.innerWidth <= 749 ? C.mobileCount : C.desktopCount;
+
+        for (var i = 0; i < n; i++) {
+          var s = document.createElement('span');
+          var z = R(C.minSize, C.maxSize);
+          var d = R(C.minDuration, C.maxDuration);
+          s.className = 'snowflake';
+          s.style.left = R(0, 100) + 'vw';
+          s.style.setProperty('--size', z.toFixed(1) + 'px');
+          s.style.setProperty('--opacity', R(0.45, 0.95).toFixed(2));
+          s.style.setProperty('--blur', R(0, 0.7).toFixed(1) + 'px');
+          s.style.setProperty('--fall-duration', d.toFixed(2) + 's');
+          s.style.setProperty('--sway-duration', R(3, 7).toFixed(2) + 's');
+          s.style.setProperty('--delay', R(-22, 0).toFixed(2) + 's');
+          s.style.setProperty('--sway-delay', R(-7, 0).toFixed(2) + 's');
+          s.style.setProperty('--drift', R(C.minDrift, C.maxDrift).toFixed(0) + 'px');
+          s.style.setProperty('--rotation', R(-120, 120).toFixed(0) + 'deg');
+          f.appendChild(s);
+        }
+        c.appendChild(f);
+      }
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', snow);
+      } else {
+        snow();
+      }
+
+      document.addEventListener('shopify:section:load', function (event) {
+        if (!event.detail || event.detail.sectionId !== '{{ section.id }}') return;
+        var c = document.getElementById(rootId);
+        if (!c) return;
+        c.innerHTML = '';
+        c.dataset.snowInitialized = 'false';
+        snow();
+      });
+    })();
+  </script>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Christmas hero",
+  "tag": "section",
+  "class": "section-christmas-hero",
+  "settings": [
+    {
+      "type": "text",
+      "id": "desktop_image_url",
+      "label": "URL ảnh desktop",
+      "info": "Kích thước 2880 × 900 px. Ảnh này hiện từ 750px trở lên."
+    },
+    {
+      "type": "text",
+      "id": "mobile_image_url",
+      "label": "URL ảnh mobile",
+      "info": "Kích thước 1125 × 1440 px. Ảnh này hiện dưới 750px."
+    },
+    {
+      "type": "text",
+      "id": "image_alt",
+      "label": "Alt ảnh",
+      "default": "Christmas"
+    },
+    {
+      "type": "url",
+      "id": "banner_link",
+      "label": "Link khi bấm vào banner"
+    },
+    {
+      "type": "text",
+      "id": "tree_image_url",
+      "label": "URL cây thông (tuỳ chọn)",
+      "info": "Để trống nếu cây thông đã nằm sẵn trong ảnh banner. Ảnh cây nền trong suốt, khoảng 747 × 1119 px."
+    },
+    {
+      "type": "header",
+      "content": "Đếm ngược"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_countdown",
+      "label": "Hiện đếm ngược",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "end_datetime",
+      "label": "Thời điểm kết thúc",
+      "default": "2026-12-25T00:00:00+07:00",
+      "info": "Định dạng ISO, gồm múi giờ. Ví dụ nửa đêm Giáng sinh giờ Việt Nam: 2026-12-25T00:00:00+07:00"
+    },
+    {
+      "type": "text",
+      "id": "label_days",
+      "label": "Nhãn ngày",
+      "default": "Days"
+    },
+    {
+      "type": "text",
+      "id": "label_hours",
+      "label": "Nhãn giờ",
+      "default": "Hours"
+    },
+    {
+      "type": "text",
+      "id": "label_minutes",
+      "label": "Nhãn phút",
+      "default": "Minutes"
+    },
+    {
+      "type": "color",
+      "id": "wave_color",
+      "label": "Màu sóng dưới banner",
+      "default": "#FFFFFF",
+      "info": "Chọn cùng màu nền của section phía dưới để đường sóng nối liền."
+    },
+    {
+      "type": "header",
+      "content": "Hiệu ứng tuyết"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_snowfall",
+      "label": "Hiện tuyết rơi",
+      "default": true
+    }
+  ],
+  "presets": [
+    {
+      "name": "Christmas hero"
+    }
+  ]
+}
+{% endschema %}

@@ -63,7 +63,12 @@ variant-selects {
   color: rgba(var(--color-foreground));
   border-radius: var(--variant-pills-radius);
   color: rgb(var(--color-foreground));
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  min-width: 44px;
+  min-height: 44px;
   margin: 0.7rem 0.5rem 0.2rem 0;
   padding: 1rem 2rem;
   font-size: 1.4rem;
@@ -148,8 +153,9 @@ variant-selects {
   align-items: center;
   justify-content: center;
   width: max-content;
-  min-width: 0;
-  height: calc(1.4rem + 2rem);
+  min-width: 44px;
+  height: 44px;
+  min-height: 44px;
   padding-left: 0;
   padding-right: 0;
 }
@@ -188,7 +194,7 @@ variant-selects {
   white-space: nowrap;
   text-decoration: none;
   pointer-events: none;
-  transform: translateY(calc(-1.7rem - 8%));
+  transform: translateY(calc(-22px - 8%));
   box-shadow: 0 0.1rem 0.3rem rgba(0, 0, 0, 0.16);
 }
 

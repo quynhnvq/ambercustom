@@ -242,7 +242,7 @@
       width: var(--size);
       height: var(--size);
       border-radius: 50%;
-      background: rgba(255, 255, 255, var(--opacity));
+      background: rgba({{ section.settings.snow_color.red }}, {{ section.settings.snow_color.green }}, {{ section.settings.snow_color.blue }}, var(--opacity));
       filter: blur(var(--blur));
       pointer-events: none;
       animation:
@@ -546,6 +546,12 @@
       "id": "show_snowfall",
       "label": "Hiện tuyết rơi",
       "default": true
+    },
+    {
+      "type": "color",
+      "id": "snow_color",
+      "label": "Màu tuyết",
+      "default": "#FFFFFF"
     }
   ],
   "presets": [

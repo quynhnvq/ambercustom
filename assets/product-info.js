@@ -157,7 +157,21 @@ if (!customElements.get('product-info')) {
       updateOptionValues(html) {
         const variantSelects = html.querySelector('variant-selects');
         if (variantSelects) {
+          // Kiwi injects .ks-chart-container into the Size label. Dawn then
+          // replaces variant-selects and hides the old node for 500ms, so the
+          // button disappears until Kiwi moves it back. Keep the same node on
+          // the new Size label before the browser paints.
+          const sizeChart = this.variantSelectors?.querySelector('.ks-chart-container');
+
           HTMLUpdateUtility.viewTransition(this.variantSelectors, variantSelects, this.preProcessHtmlCallbacks);
+
+          const sizeGroup = [...(this.variantSelectors?.querySelectorAll(':scope > [data-option-name]') || [])].find(
+            (group) => /size/i.test(group.dataset.optionName || '')
+          );
+          const sizeLabel = sizeGroup?.querySelector(':scope > legend, :scope > label');
+          if (sizeChart && sizeLabel && !sizeLabel.contains(sizeChart)) {
+            sizeLabel.appendChild(sizeChart);
+          }
         }
       }
 

@@ -144,13 +144,36 @@ variant-selects {
 
 .product-form__input--pill input[type='radio'] + label:has(.variant-option-badge) {
   z-index: 1;
-  min-width: 11rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: max-content;
+  min-width: 0;
+  height: calc(1.4rem + 2rem);
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.product-form__input--pill input[type='radio'] + label:has(.variant-option-badge) > .variant-option-label__text {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.product-form__input--pill[data-option-name*='size' i] input[type='radio'] + label {
+  padding-left: 6px;
+  padding-right: 6px;
+}
+
+.product-form__input--pill[data-option-name*='size' i] input[type='radio'] + label:has(.variant-option-badge) {
+  padding-left: 0;
+  padding-right: 0;
 }
 
 .variant-option-badge {
-  position: absolute;
-  top: 0;
-  left: 50%;
+  position: relative;
   z-index: 2;
   display: inline-flex;
   align-items: center;
@@ -165,7 +188,7 @@ variant-selects {
   white-space: nowrap;
   text-decoration: none;
   pointer-events: none;
-  transform: translate(-50%, -58%);
+  transform: translateY(calc(-1.7rem - 8%));
   box-shadow: 0 0.1rem 0.3rem rgba(0, 0, 0, 0.16);
 }
 

@@ -1,7 +1,16 @@
 {%- liquid
   assign desktop_image = section.settings.desktop_image_url | strip
   assign mobile_image = section.settings.mobile_image_url | strip
+  if desktop_image == blank
+    assign desktop_image = 'https://cdn.shopify.com/s/files/1/0748/9077/2658/files/pfh26-xmas-hero-desktop.webp?v=1790604441'
+  endif
+  if mobile_image == blank
+    assign mobile_image = 'https://cdn.shopify.com/s/files/1/0748/9077/2658/files/Hero_Banner_-_Mobile.webp?v=1790604891'
+  endif
   assign tree_image = section.settings.tree_image_url | strip
+  if tree_image == blank
+    assign tree_image = 'https://cdn.shopify.com/s/files/1/0748/9077/2658/files/pfh26-xmas-tree-02_9fbdc88d-6181-43d3-bea8-d209e8ba6612.webp?v=1790609356'
+  endif
   assign end_at = section.settings.end_datetime | strip
   assign loading = 'lazy'
   assign fetchpriority = 'auto'
@@ -10,6 +19,45 @@
     assign fetchpriority = 'high'
   endif
 -%}
+
+{%- if section.settings.use_christmas_heading_font -%}
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Mountains+of+Christmas:wght@400&display=swap" rel="stylesheet">
+  <style>
+    h2,
+    h2.hxxl,
+    h2.hxl,
+    h2.h0,
+    h2.h1,
+    h2.h2,
+    h2.h3,
+    h2.h4,
+    h2.h5,
+    h2.title {
+      font-family: "Mountains of Christmas", cursive;
+      font-style: normal;
+      font-weight: 400;
+      font-size: 28px;
+      line-height: 1.15;
+    }
+
+    @media screen and (min-width: 750px) {
+      h2,
+      h2.hxxl,
+      h2.hxl,
+      h2.h0,
+      h2.h1,
+      h2.h2,
+      h2.h3,
+      h2.h4,
+      h2.h5,
+      h2.title {
+        font-size: 44px;
+      }
+    }
+  </style>
+{%- endif -%}
 
 {%- style -%}
   #shopify-section-{{ section.id }} {
@@ -472,16 +520,23 @@
   "class": "section-christmas-hero",
   "settings": [
     {
+      "type": "checkbox",
+      "id": "use_christmas_heading_font",
+      "label": "Dùng font Mountains of Christmas cho heading",
+      "info": "Bật sẽ tải font độ đậm 400 và áp dụng cho thẻ h2. Cỡ chữ 28px trên mobile, 44px trên desktop. Tắt thì không tải font.",
+      "default": true
+    },
+    {
       "type": "text",
       "id": "desktop_image_url",
       "label": "URL ảnh desktop",
-      "info": "Kích thước 2880 × 900 px. Ảnh này hiện từ 750px trở lên."
+      "info": "Kích thước 2880 × 900 px. Ảnh này hiện từ 750px trở lên. Để trống sẽ dùng ảnh desktop mặc định."
     },
     {
       "type": "text",
       "id": "mobile_image_url",
       "label": "URL ảnh mobile",
-      "info": "Kích thước 1125 × 1440 px. Ảnh này hiện dưới 750px."
+      "info": "Kích thước 1125 × 1440 px. Ảnh này hiện dưới 750px. Để trống sẽ dùng ảnh mobile mặc định."
     },
     {
       "type": "text",
@@ -498,7 +553,7 @@
       "type": "text",
       "id": "tree_image_url",
       "label": "URL cây thông (tuỳ chọn)",
-      "info": "Để trống nếu cây thông đã nằm sẵn trong ảnh banner. Ảnh cây nền trong suốt, khoảng 747 × 1119 px."
+      "info": "Ảnh cây nền trong suốt, khoảng 747 × 1119 px. Để trống sẽ dùng cây thông mặc định."
     },
     {
       "type": "header",

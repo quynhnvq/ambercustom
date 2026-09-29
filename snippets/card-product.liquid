@@ -120,7 +120,7 @@
                 class="full-unstyled-link"
                 aria-labelledby="StandardCardNoMediaLink-{{ section_id }}-{{ card_product.id }} NoMediaStandardBadge-{{ section_id }}-{{ card_product.id }}"
               >
-                {{ card_product.title | escape }}
+                <span class="card__heading-text">{{ card_product.title | escape }}</span>
               </a>
             </h3>
           </div>
@@ -157,7 +157,7 @@
               class="full-unstyled-link"
               aria-labelledby="CardLink-{{ section_id }}-{{ card_product.id }} Badge-{{ section_id }}-{{ card_product.id }}"
             >
-              {{ card_product.title | escape }}
+              <span class="card__heading-text">{{ card_product.title | escape }}</span>
             </a>
           </h3>
           <div class="card-information">
@@ -607,7 +607,7 @@
         <div class="card__information">
           <h3 class="card__heading card__heading--placeholder{% if settings.card_style == 'standard' %} h5{% endif %}">
             <a role="link" aria-disabled="true" class="full-unstyled-link">
-              {{ 'onboarding.product_title' | t }}
+              <span class="card__heading-text">{{ 'onboarding.product_title' | t }}</span>
             </a>
           </h3>
           <div class="card-information">

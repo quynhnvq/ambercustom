@@ -305,6 +305,25 @@
   margin-bottom: 0;
 }
 
+.product-card-wrapper .card__heading-text {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+  line-clamp: 1;
+}
+
+@media screen and (min-width: 750px) {
+  .product-card-wrapper .card__heading-text {
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+  }
+
+  .product-card-wrapper .card:not(.card--horizontal) .card__heading-text {
+    min-height: calc((1em + 0.3em / max(1, var(--font-heading-scale))) * 2);
+  }
+}
+
 .card__heading:last-child {
   margin-bottom: 0;
 }

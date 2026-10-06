@@ -1,0 +1,145 @@
+{% comment %}
+  Gift Box add-on (Macorner-style).
+  Accepts:
+  - block: {Object} section block
+  - product: {Object} current product
+  - section: {Object} current section
+
+  Visibility:
+  - display_mode = tagged -> only products having the tag (default: with-gift-box)
+  - display_mode = all    -> every product
+  - Products whose type is "Gift box" never show the add-on.
+
+  Note: no <form> is rendered on purpose. product-form.js reads data attributes
+  and posts to /cart/add itself, so apps looking for form[action="/cart/add"]
+  keep finding only the real product form.
+{% endcomment %}
+
+{%- liquid
+  assign show_gift_box_addon = false
+  assign current_type = product.type | downcase | strip
+
+  if current_type != 'gift box'
+    assign display_mode = block.settings.display_mode | default: 'tagged'
+    if display_mode == 'all'
+      assign show_gift_box_addon = true
+    else
+      assign required_tag = block.settings.required_tag | default: 'with-gift-box' | strip | downcase
+      for tag in product.tags
+        assign tag_normalized = tag | strip | downcase
+        if tag_normalized == required_tag
+          assign show_gift_box_addon = true
+          break
+        endif
+      endfor
+    endif
+  endif
+
+  assign gift_box = blank
+  assign gift_variant = blank
+  if show_gift_box_addon
+    assign gift_box = block.settings.gift_box_product
+    if gift_box == blank
+      assign gift_box = all_products['add-on-gift-box-service']
+    endif
+    if gift_box != blank and gift_box.available and gift_box.id != product.id
+      assign gift_variant = gift_box.selected_or_first_available_variant
+    endif
+  endif
+-%}
+
+{%- if gift_variant != blank and gift_variant.available -%}
+  {{ 'gift-box-addon.css' | asset_url | stylesheet_tag }}
+
+  <div
+    class="gift-box-wrapper quick-add-hidden"
+    id="GiftBoxAddon-{{ section.id }}"
+    data-gift-box
+    data-gift-box-variant-id="{{ gift_variant.id }}"
+    data-gift-box-price="{{ gift_variant.price }}"
+    {{ block.shopify_attributes }}
+  >
+    <p class="gift-box-title">
+      {{ block.settings.heading | default: 'Add-On Gift Box Service' }}
+    </p>
+
+    <div class="gift-box">
+      <div class="gift-box-content">
+        <div class="gift-box-content-img">
+          {%- if gift_box.featured_image -%}
+            {{
+              gift_box.featured_image
+              | image_url: width: 200
+              | image_tag:
+                loading: 'lazy',
+                widths: '100, 200',
+                sizes: '72px',
+                class: 'gift-box-image',
+                alt: gift_box.title
+            }}
+          {%- endif -%}
+        </div>
+
+        <div class="gift-box-content-sb">
+          <p class="gift-box-content-title">
+            Only
+            <span class="gift-box-price money">
+              {{- gift_variant.price | money_with_currency -}}
+            </span>
+            <span class="gift-box-price-each">/each</span>
+          </p>
+          {%- if block.settings.description != blank -%}
+            <p class="gift-box-description">{{ block.settings.description }}</p>
+          {%- endif -%}
+
+          <div class="choose-to-buy-wrapper">
+            <label class="choose-to-buy-box" for="GiftBoxChoose-{{ section.id }}">
+              <input
+                id="GiftBoxChoose-{{ section.id }}"
+                type="checkbox"
+                value="true"
+                data-gift-box-checkbox
+                {% if block.settings.default_checked %}
+                  checked
+                {% endif %}
+              >
+              <span class="choose-to-buy-label">
+                {{ block.settings.checkbox_label | default: 'Choose to buy' }}
+              </span>
+            </label>
+          </div>
+        </div>
+
+        <div class="gift-box-qty" data-gift-box-qty>
+          <button
+            type="button"
+            class="gift-box-qty__button"
+            name="minus"
+            aria-label="Decrease gift box quantity"
+          >
+            −
+          </button>
+          <input
+            type="number"
+            id="GiftBoxQty-{{ section.id }}"
+            class="gift-box-qty__input"
+            data-gift-box-qty-input
+            value="1"
+            min="1"
+            step="1"
+            inputmode="numeric"
+            aria-label="Gift box quantity"
+          >
+          <button
+            type="button"
+            class="gift-box-qty__button"
+            name="plus"
+            aria-label="Increase gift box quantity"
+          >
+            +
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+{%- endif -%}

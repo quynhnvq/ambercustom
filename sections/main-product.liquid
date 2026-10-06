@@ -281,6 +281,8 @@
                     </div>
                   </details>
                 </div>
+              {%- when 'gift_box_addon' -%}
+                {% render 'gift-box-addon', block: block, product: product, section: section %}
               {%- when 'quantity_selector' -%}
                 <div
                   id="Quantity-Form-{{ section.id }}"
@@ -911,6 +913,67 @@
           "type": "checkbox",
           "id": "show_inventory_quantity",
           "label": "t:sections.main-product.blocks.inventory.settings.show_inventory_quantity.label",
+          "default": true
+        }
+      ]
+    },
+    {
+      "type": "gift_box_addon",
+      "name": "Gift Box Add-On",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "product",
+          "id": "gift_box_product",
+          "label": "Gift Box product",
+          "info": "Select your Gift box product (type should be Gift box). Defaults to handle add-on-gift-box-service if empty."
+        },
+        {
+          "type": "select",
+          "id": "display_mode",
+          "label": "Show on",
+          "options": [
+            {
+              "value": "tagged",
+              "label": "Only products with tag"
+            },
+            {
+              "value": "all",
+              "label": "All products"
+            }
+          ],
+          "default": "tagged",
+          "info": "Use “Only products with tag” if some products should not show Gift Box."
+        },
+        {
+          "type": "text",
+          "id": "required_tag",
+          "label": "Required product tag",
+          "default": "with-gift-box",
+          "info": "Only used when “Only products with tag” is selected. Add this tag on products that should show Gift Box."
+        },
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "default": "Add-On Gift Box Service"
+        },
+        {
+          "type": "text",
+          "id": "description",
+          "label": "Description",
+          "default": "Make a lasting impression with our gift box!"
+        },
+        {
+          "type": "text",
+          "id": "checkbox_label",
+          "label": "Checkbox label",
+          "default": "Choose to buy"
+        },
+        {
+          "type": "checkbox",
+          "id": "default_checked",
+          "label": "Checked by default",
           "default": true
         }
       ]

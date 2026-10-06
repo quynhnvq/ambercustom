@@ -128,11 +128,19 @@
   }
 
   .gift-box-content {
-    flex-wrap: wrap;
-    gap: 1rem;
+    gap: 0.8rem;
   }
 
-  .gift-box-content-sb {
-    flex: 1 1 calc(100% - 90px);
+  .gift-box-content-img {
+    flex-basis: 64px;
+    width: 64px;
+    height: 64px;
+  }
+
+  /* Keep the description on a single line; font scales with the viewport width. */
+  .gift-box-description {
+    font-size: clamp(0.9rem, 2.8vw, 1.2rem);
+    letter-spacing: 0;
+    white-space: nowrap;
   }
 }

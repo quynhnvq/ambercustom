@@ -122,53 +122,6 @@
   color: rgb(var(--color-foreground));
 }
 
-.gift-box-qty {
-  display: inline-flex;
-  align-items: center;
-  flex: 0 0 auto;
-  border: 1px solid #e2e2e2;
-  border-radius: 999px;
-  overflow: hidden;
-  background: #fff;
-  height: 36px;
-}
-
-.gift-box-qty__button {
-  width: 34px;
-  height: 100%;
-  border: 0;
-  background: transparent;
-  color: #f1641e;
-  font-size: 1.8rem;
-  line-height: 1;
-  cursor: pointer;
-  padding: 0;
-}
-
-.gift-box-qty__button:hover {
-  background: rgba(241, 100, 30, 0.08);
-}
-
-.gift-box-qty__input {
-  width: 36px;
-  height: 100%;
-  border: 0;
-  border-left: 1px solid #eee;
-  border-right: 1px solid #eee;
-  text-align: center;
-  font-size: 1.4rem;
-  background: #fafafa;
-  color: rgb(var(--color-foreground));
-  -moz-appearance: textfield;
-  appearance: textfield;
-}
-
-.gift-box-qty__input::-webkit-outer-spin-button,
-.gift-box-qty__input::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
-
 @media screen and (max-width: 749px) {
   .gift-box {
     padding: 1.2rem;
@@ -181,9 +134,5 @@
 
   .gift-box-content-sb {
     flex: 1 1 calc(100% - 90px);
-  }
-
-  .gift-box-qty {
-    margin-left: auto;
   }
 }

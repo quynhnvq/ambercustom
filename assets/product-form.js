@@ -22,7 +22,7 @@ if (!customElements.get('product-form')) {
        * Returns { variantId, quantity } only when the add-on belongs to THIS product form
        * (same <product-info>), is visible and is ticked. Never used inside quick-add modals.
        */
-      getGiftBoxSelection() {
+      getGiftBoxSelection(formData) {
         if (this.closest('quick-add-modal')) return null;
 
         const wrapper = this.closest('product-info')?.querySelector('[data-gift-box]');
@@ -35,7 +35,8 @@ if (!customElements.get('product-form')) {
         const variantId = wrapper.dataset.giftBoxVariantId;
         if (!variantId) return null;
 
-        const qty = parseInt(wrapper.querySelector('[data-gift-box-qty-input]')?.value, 10);
+        // Gift box quantity always follows the main product quantity.
+        const qty = parseInt(formData?.get('quantity'), 10);
         return { variantId, quantity: Number.isFinite(qty) && qty > 0 ? qty : 1 };
       }
 
@@ -96,7 +97,7 @@ if (!customElements.get('product-form')) {
         }
         config.body = formData;
 
-        const giftBox = this.getGiftBoxSelection();
+        const giftBox = this.getGiftBoxSelection(formData);
         let giftResponse = null;
         let giftAdded = false;
         let mainAdded = false;
@@ -220,27 +221,4 @@ if (!customElements.get('product-form')) {
       }
     }
   );
-
-  // Gift box quantity +/- (delegated; lives inside the guard so it is bound only once per page,
-  // even if this script is re-executed, e.g. after a quick-add modal loads).
-  document.addEventListener('click', (event) => {
-    const button = event.target.closest('.gift-box-qty__button');
-    if (!button) return;
-
-    const input = button.closest('[data-gift-box-qty]')?.querySelector('[data-gift-box-qty-input]');
-    if (!input) return;
-
-    let qty = parseInt(input.value, 10) || 1;
-    if (button.name === 'minus') qty = Math.max(1, qty - 1);
-    if (button.name === 'plus') qty += 1;
-    input.value = qty;
-  });
-
-  document.addEventListener('change', (event) => {
-    if (!event.target.matches?.('[data-gift-box-qty-input]')) return;
-
-    let qty = parseInt(event.target.value, 10);
-    if (!Number.isFinite(qty) || qty < 1) qty = 1;
-    event.target.value = qty;
-  });
 }

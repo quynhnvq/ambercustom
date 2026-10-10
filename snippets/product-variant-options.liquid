@@ -6,6 +6,7 @@
   - option: {Object} current product_option object.
   - block: {Object} block object.
   - picker_type: {String} type of picker to dispay
+  - selected_material_is_glass_or_ceramic: {Boolean} true when the selected Glass/Ceramic option value is Glass or Ceramic
 
   Usage:
   {% render 'product-variant-options',
@@ -17,6 +18,12 @@
 {% endcomment %}
 {%- liquid
   assign product_form_id = 'product-form-' | append: section.id
+
+  assign current_option_name = option.name | downcase
+  assign is_size_option = false
+  if current_option_name contains 'size'
+    assign is_size_option = true
+  endif
 -%}
 
 {%- for value in option.values -%}
@@ -90,6 +97,13 @@
 
       if display_value == blank
         assign display_value = value
+      endif
+    endif
+
+    if selected_material_is_glass_or_ceramic and is_size_option
+      assign size_key = value | downcase | strip | replace: 'out of stock', '' | replace: 'outofstock', '' | replace: 'best seller', '' | replace: 'bestseller', '' | replace: '(', '' | replace: ')', '' | replace: '|', '' | replace: '/', '' | replace: '–', '' | replace: '—', '' | replace: '-', '' | replace: ' ', ''
+      if size_key == '3in' or size_key == '3inch' or size_key == '3inches'
+        assign is_best_seller = true
       endif
     endif
 

@@ -8,6 +8,26 @@
   Usage:
   {% render 'product-variant-picker', product: product, block: block, product_form_id: product_form_id %}
 {% endcomment %}
+{%- liquid
+  # Match Glass/Ceramic by value, so either "Select Styles" or "Select Material" qualifies.
+  assign selected_material_is_glass_or_ceramic = false
+  for material_option in product.options_with_values
+    assign option_has_glass_or_ceramic = false
+    for material_value in material_option.values
+      assign material_value_name = material_value | downcase | strip
+      if material_value_name == 'glass' or material_value_name == 'ceramic'
+        assign option_has_glass_or_ceramic = true
+      endif
+    endfor
+
+    if option_has_glass_or_ceramic
+      assign selected_material_name = material_option.selected_value | downcase | strip
+      if selected_material_name == 'glass' or selected_material_name == 'ceramic'
+        assign selected_material_is_glass_or_ceramic = true
+      endif
+    endif
+  endfor
+-%}
 {%- unless product.has_only_default_variant -%}
   <variant-selects
     id="variant-selects-{{ section.id }}"
@@ -43,7 +63,8 @@
             product: product,
             option: option,
             block: block,
-            picker_type: picker_type
+            picker_type: picker_type,
+            selected_material_is_glass_or_ceramic: selected_material_is_glass_or_ceramic
           %}
         </fieldset>
       {%- elsif picker_type == 'button' -%}
@@ -57,7 +78,8 @@
             product: product,
             option: option,
             block: block,
-            picker_type: picker_type
+            picker_type: picker_type,
+            selected_material_is_glass_or_ceramic: selected_material_is_glass_or_ceramic
           %}
         </fieldset>
       {%- else -%}
@@ -88,7 +110,8 @@
                 product: product,
                 option: option,
                 block: block,
-                picker_type: picker_type
+                picker_type: picker_type,
+                selected_material_is_glass_or_ceramic: selected_material_is_glass_or_ceramic
               %}
             </select>
             <span class="svg-wrapper">
